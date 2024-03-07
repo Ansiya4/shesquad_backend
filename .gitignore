@@ -1,0 +1,18 @@
+# Ignore virtual environment
+venv/
+
+# Ignore database file
+db.sqlite3
+
+# Ignore compiled Python files
+*.pyc
+
+# Ignore local settings file
+my_project/settings_local.py
+
+# Ignore other temporary or generated files
+__pycache__/
+*.pyo
+*.swp
+*~
+.DS_Store
