@@ -1,5 +1,6 @@
 # Ignore virtual environment
 venv/
+myprojectenv
 
 # Ignore database file
 db.sqlite3
