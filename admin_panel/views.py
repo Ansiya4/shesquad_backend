@@ -5,7 +5,8 @@ from rest_framework.generics import UpdateAPIView, ListAPIView, CreateAPIView, R
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from accounts.serializers import UserRegistrationSerializer
+from accounts.serializers import *
+from django.db.models import Q
 # Create your views here.
 
 class CategoryView(ModelViewSet):
@@ -40,13 +41,8 @@ class UserUnblock(UpdateAPIView):
 
 class ExpertRegister(CreateAPIView):
     serializer_class = ExpertRegistrationSerializer
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response({'message' : 'Registration successfully completed'},status=status.HTTP_201_CREATED)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    queryset = CustomUser.objects.all()
+
 
 class ExpertEdit(RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
@@ -81,3 +77,44 @@ class ExpertUnblock(UpdateAPIView):
         expert.is_active = True
         expert.save()
         return Response({'message' : 'Expert has been unblocked successfully'},status=status.HTTP_400_BAD_REQUEST)
+
+
+class IssuesRegister(CreateAPIView):
+    serializer_class = IssuesRegistrationSerializer
+    def post(self, request, user_id, expert_id):
+        try:
+            user = CustomUser.objects.get(id=user_id)
+            expert = CustomUser.objects.get(id=expert_id)
+        except CustomUser.DoesNotExist:
+            return Response("User or expert not found", status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=user, expert=expert)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    
+
+class IssuesList(ListAPIView):
+    queryset = Issues.objects.all()
+    serializer_class = IssueListSerializer
+
+
+class Category_Expert_Filter(ListAPIView):
+    serializer_class = UserListSerializer
+    queryset = CustomUser.objects.all()
+
+    def get_queryset(self):
+            cat_id = self.request.query_params.get('cat_id')
+            queryset = CustomUser.objects.exclude(Q(is_superuser=True) | Q(category__isnull=True) )
+
+            if cat_id:
+                queryset = queryset.filter(category=cat_id)
+
+            return queryset
+
+
+
+# Dashboard Home user lastLogin List
+class LastLoginUserlist(ListAPIView):
+    serializer_class = UserListSerializer
+    queryset = CustomUser.objects.all()[:5]

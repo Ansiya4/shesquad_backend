@@ -13,12 +13,7 @@ class MyTokenObtainPairView(TokenObtainPairView):
 
 class UserRegister(CreateAPIView):
     serializer_class = UserRegistrationSerializer
-    def post(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response({'message':'Registration successfully completed'}, status=status.HTTP_201_CREATED)
-        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
+    queryset = CustomUser.objects.all()
     
 
 class UserEdit(RetrieveUpdateAPIView):

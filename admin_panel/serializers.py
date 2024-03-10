@@ -23,4 +23,26 @@ class ExpertRegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password' : {'write_only' : True}
         }
+        def create(self, validated_data):
+            user = CustomUser.objects.create_user(**validated_data)
+            return user
 
+class IssuesRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Issues
+        fields = ['message']
+
+
+class IssueListSerializer(serializers.ModelSerializer):
+    user_firstname = serializers.SerializerMethodField()
+    expert_firstname = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Issues
+        fields = ['user_firstname', 'expert_firstname', 'message']
+
+    def get_user_firstname(self, obj):
+        return obj.user.first_name if obj.user else None
+
+    def get_expert_firstname(self, obj):
+        return obj.expert.first_name if obj.expert else None
