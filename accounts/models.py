@@ -30,7 +30,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(max_length=50, unique=True)
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
     description = models.TextField(max_length=250, null=True, blank=True)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_google = models.BooleanField(default=False)
     category = models.ForeignKey('admin_panel.Category', on_delete=models.SET_NULL, null=True, blank=True)

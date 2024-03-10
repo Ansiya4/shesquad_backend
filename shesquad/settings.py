@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 SITE_ID=1
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'accounts',
     'admin_panel',
     'rest_framework_simplejwt',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -90,11 +92,21 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'shesquad.wsgi.application'
+ASGI_APPLICATION = "shesquad.asgi.application"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('localhost', 6379)],
+        },
+    },
 }
 
 
@@ -136,6 +148,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainSlidingSerializer",
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
