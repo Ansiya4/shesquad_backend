@@ -27,7 +27,7 @@ class ExpertRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         password = validated_data.pop('password')
         user = CustomUser.objects.create_user(password=password, **validated_data)
-        return user
+        return user
 
 class IssuesRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
