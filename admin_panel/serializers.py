@@ -19,13 +19,15 @@ class UserListSerializer(serializers.ModelSerializer):
 class ExpertRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id','first_name','last_name','email','password','category','profile_picture','description']
+        fields = ['id', 'first_name', 'last_name', 'email', 'password', 'category', 'profile_picture', 'description']
         extra_kwargs = {
-            'password' : {'write_only' : True}
+            'password': {'write_only': True}
         }
-        def create(self, validated_data):
-            user = CustomUser.objects.create_user(**validated_data)
-            return user
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = CustomUser.objects.create_user(password=password, **validated_data)
+        return user
 
 class IssuesRegistrationSerializer(serializers.ModelSerializer):
     class Meta:
